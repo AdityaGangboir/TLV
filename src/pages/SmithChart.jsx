@@ -485,7 +485,7 @@ const SmithChartTool = () => {
                 Char. Impedance (Zc)
               </div>
               <div className="output-value small">
-                {results.Zc.re.toFixed(2)} {results.Zc.im >= 0 ? '+' : ''} j{results.Zc.im.toFixed(2)} Ω
+                {results.Zc.re.toFixed(2)} {results.Zc.im >= 0 ? '+ j' : '- j'}{Math.abs(results.Zc.im).toFixed(2)} Ω
               </div>
             </div>
           </div>
