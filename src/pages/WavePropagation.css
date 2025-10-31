@@ -3,7 +3,7 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #f97316 0%, #dc2626 100%);
   padding: 2rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .wave-prop-wrapper {
@@ -202,9 +202,15 @@
   border-top: 4px solid;
 }
 
-.info-card.orange { border-top-color: #f97316; }
-.info-card.blue { border-top-color: #3b82f6; }
-.info-card.green { border-top-color: #10b981; }
+.info-card.orange {
+  border-top-color: #f97316;
+}
+.info-card.blue {
+  border-top-color: #3b82f6;
+}
+.info-card.green {
+  border-top-color: #10b981;
+}
 
 .info-label {
   font-size: 0.75rem;
@@ -219,7 +225,7 @@
   font-size: 1.25rem;
   font-weight: 700;
   color: #1f2937;
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
 }
 
 /* Visualization Section */
@@ -276,7 +282,7 @@
   .wave-prop-content {
     grid-template-columns: 1fr;
   }
-  
+
   .info-cards {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -286,23 +292,23 @@
   .wave-prop-container {
     padding: 1rem;
   }
-  
+
   .wave-prop-header {
     padding: 1.5rem;
   }
-  
+
   .wave-prop-title {
     font-size: 1.5rem;
   }
-  
+
   .info-cards {
     grid-template-columns: 1fr;
   }
-  
+
   .animation-controls {
     flex-direction: column;
   }
-  
+
   .wave-chart {
     width: 100%;
     height: auto;

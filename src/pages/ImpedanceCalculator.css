@@ -3,7 +3,7 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 2rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .impedance-calc-wrapper {
@@ -148,14 +148,30 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.result-card.purple { border-left-color: #a855f7; }
-.result-card.blue { border-left-color: #3b82f6; }
-.result-card.green { border-left-color: #10b981; }
-.result-card.orange { border-left-color: #f97316; }
-.result-card.red { border-left-color: #ef4444; }
-.result-card.teal { border-left-color: #14b8a6; }
-.result-card.pink { border-left-color: #ec4899; }
-.result-card.yellow { border-left-color: #eab308; }
+.result-card.purple {
+  border-left-color: #a855f7;
+}
+.result-card.blue {
+  border-left-color: #3b82f6;
+}
+.result-card.green {
+  border-left-color: #10b981;
+}
+.result-card.orange {
+  border-left-color: #f97316;
+}
+.result-card.red {
+  border-left-color: #ef4444;
+}
+.result-card.teal {
+  border-left-color: #14b8a6;
+}
+.result-card.pink {
+  border-left-color: #ec4899;
+}
+.result-card.yellow {
+  border-left-color: #eab308;
+}
 
 .result-icon {
   width: 50px;
@@ -170,14 +186,30 @@
   flex-shrink: 0;
 }
 
-.result-card.purple .result-icon { background: linear-gradient(135deg, #a855f7, #9333ea); }
-.result-card.blue .result-icon { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-.result-card.green .result-icon { background: linear-gradient(135deg, #10b981, #059669); }
-.result-card.orange .result-icon { background: linear-gradient(135deg, #f97316, #ea580c); }
-.result-card.red .result-icon { background: linear-gradient(135deg, #ef4444, #dc2626); }
-.result-card.teal .result-icon { background: linear-gradient(135deg, #14b8a6, #0d9488); }
-.result-card.pink .result-icon { background: linear-gradient(135deg, #ec4899, #db2777); }
-.result-card.yellow .result-icon { background: linear-gradient(135deg, #eab308, #ca8a04); }
+.result-card.purple .result-icon {
+  background: linear-gradient(135deg, #a855f7, #9333ea);
+}
+.result-card.blue .result-icon {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+.result-card.green .result-icon {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+.result-card.orange .result-icon {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+}
+.result-card.red .result-icon {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+.result-card.teal .result-icon {
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
+}
+.result-card.pink .result-icon {
+  background: linear-gradient(135deg, #ec4899, #db2777);
+}
+.result-card.yellow .result-icon {
+  background: linear-gradient(135deg, #eab308, #ca8a04);
+}
 
 .result-content {
   flex: 1;
@@ -193,7 +225,7 @@
 }
 
 .result-value {
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
   font-size: 1rem;
   font-weight: 700;
   color: #1f2937;
@@ -214,7 +246,7 @@
   .impedance-calc-content {
     grid-template-columns: 1fr;
   }
-  
+
   .impedance-calc-results {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
@@ -224,15 +256,15 @@
   .impedance-calc-container {
     padding: 1rem;
   }
-  
+
   .impedance-calc-header {
     padding: 1.5rem;
   }
-  
+
   .impedance-calc-title {
     font-size: 1.5rem;
   }
-  
+
   .impedance-calc-results {
     grid-template-columns: 1fr;
   }

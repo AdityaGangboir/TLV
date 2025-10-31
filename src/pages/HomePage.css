@@ -87,6 +87,7 @@ body::before {
   background: linear-gradient(90deg, #3b82f6, #a855f7, #f97316);
   background-size: 200% auto;
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: gradientShift 4s ease-in-out infinite;
 }
@@ -139,6 +140,7 @@ body::before {
   margin: 50px 0 40px;
   background: linear-gradient(90deg, #3b82f6, #a855f7, #f97316);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: glowText 3s ease-in-out infinite;
 }
@@ -252,6 +254,7 @@ body::before {
   font-weight: 600;
   background: linear-gradient(90deg, #3b82f6, #a855f7, #f97316);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 

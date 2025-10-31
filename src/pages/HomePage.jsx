@@ -114,12 +114,7 @@ const HomePage = () => {
                     onClick={() => navigate(card.route)}
                   >
                     <span>Explore</span>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      fill="none"
-                    >
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                       <path
                         d="M6 3L11 8L6 13"
                         stroke="currentColor"
@@ -143,13 +138,27 @@ const HomePage = () => {
               <h3>Project Credits</h3>
             </div>
             <div className="credits-content">
-              <p><strong>Project:</strong> Transmission Line Visualizer</p>
-              <p><strong>Developed By:</strong></p>
-              <p><strong>Aditya Gangboir -</strong> 2301EE04</p>
-              <p><strong>K Ajay - </strong>2302VL02</p>
-              <p><strong>Neelesh Anamala -</strong> 2301EE39</p>
-              <p><strong>Manu Kushwah -</strong> 2301EE46</p>
-              <p><strong>Praveen Deepak -</strong> 2302PC09</p>
+              <p>
+                <strong>Project:</strong> Transmission Line Visualizer
+              </p>
+              <p>
+                <strong>Developed By:</strong>
+              </p>
+              <p>
+                <strong>Aditya Gangboir -</strong> 2301EE04
+              </p>
+              <p>
+                <strong>K Ajay - </strong>2302VL02
+              </p>
+              <p>
+                <strong>Neelesh Anamala -</strong> 2301EE39
+              </p>
+              <p>
+                <strong>Manu Kushwah -</strong> 2301EE46
+              </p>
+              <p>
+                <strong>Praveen Deepak -</strong> 2302PC09
+              </p>
             </div>
           </div>
         </div>
