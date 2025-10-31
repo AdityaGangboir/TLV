@@ -72,7 +72,7 @@ const HomePage = () => {
 
           <h1 className="hero-title">
             <span className="title-line">Transmission Line</span>
-            <span className="title-line gradient-text">Visualizer</span>
+            <span className="title-line gradient-text"> Visualizer</span>
           </h1>
 
           <p className="hero-subtitle">
@@ -144,9 +144,12 @@ const HomePage = () => {
             </div>
             <div className="credits-content">
               <p><strong>Project:</strong> Transmission Line Visualizer</p>
-              <p><strong>Developed By:</strong> Your Team Name</p>
-              <p><strong>Version:</strong> 1.0.0</p>
-              <p><strong>Year:</strong> 2025</p>
+              <p><strong>Developed By:</strong></p>
+              <p><strong>Aditya Gangboir -</strong> 2301EE04</p>
+              <p><strong>K Ajay - </strong>2302VL02</p>
+              <p><strong>Neelesh Anamala -</strong> 2301EE39</p>
+              <p><strong>Manu Kushwah -</strong> 2301EE46</p>
+              <p><strong>Praveen Deepak -</strong> 2302PC09</p>
             </div>
           </div>
         </div>

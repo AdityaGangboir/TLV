@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router'
+import { Link, Route, Routes } from 'react-router'
 import './App.css'
 import HomePage from './pages/HomePage'
 import SmithChartTool from './pages/SmithChart'
