@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import { Zap, TrendingUp, Radio } from "lucide-react";
 import "./SmithChart.css";
 
-/* Complex number utilities (unchanged) */
+/* Complex number utilities */
 class Complex {
   constructor(real, imag = 0) {
     this.re = real;
@@ -38,6 +38,9 @@ class Complex {
   }
   scale(k) {
     return new Complex(this.re * k, this.im * k);
+  }
+  static fromPolar(mag, phase) {
+    return new Complex(mag * Math.cos(phase), mag * Math.sin(phase));
   }
 }
 
@@ -87,30 +90,34 @@ const SmithChartTool = () => {
 
     const ZL = new Complex(ZL_real, ZL_imag);
 
-    const gl = gamma.scale(length);
-    const sinh_gl = new Complex(
-      Math.sinh(gl.re) * Math.cos(gl.im),
-      Math.cosh(gl.re) * Math.sin(gl.im)
-    );
-    const cosh_gl = new Complex(
-      Math.cosh(gl.re) * Math.cos(gl.im),
-      Math.sinh(gl.re) * Math.sin(gl.im)
-    );
-    const tanh_gl = sinh_gl.div(cosh_gl);
-
-    const num = ZL.add(Zc.mul(tanh_gl));
-    const den = Zc.add(ZL.mul(tanh_gl));
-    const Zin = Zc.mul(num.div(den));
-
-    const Gamma = Zin.sub(new Complex(Z0, 0)).div(Zin.add(new Complex(Z0, 0)));
+    // Calculate reflection coefficient at load
     const GammaL = ZL.sub(new Complex(Z0, 0)).div(ZL.add(new Complex(Z0, 0)));
+    
+    // Calculate wavelength and electrical length
+    const beta = Math.abs(gamma.im); // Phase constant (rad/m)
+    const wavelength = beta !== 0 ? (2 * Math.PI) / beta : 0;
+    const electricalLength = wavelength !== 0 ? (length / wavelength) : 0;
+    const electricalLengthDegrees = electricalLength * 360;
+    
+    // Rotate reflection coefficient toward generator
+    // Γ(d) = ΓL × e^(-j2βd) - moving toward generator rotates CLOCKWISE
+    const rotationAngle = -2 * beta * length; // Negative for clockwise rotation
+    const rotationFactor = Complex.fromPolar(1, rotationAngle);
+    const Gamma = GammaL.mul(rotationFactor);
+    
+    // Calculate Zin from Gamma using inverse transformation
+    // Z = Z0 * (1 + Γ) / (1 - Γ)
+    const oneMinusGamma = new Complex(1, 0).sub(Gamma);
+    const onePlusGamma = new Complex(1, 0).add(Gamma);
+    const Zin = onePlusGamma.div(oneMinusGamma).scale(Z0);
 
     const Gamma_mag = Gamma.mag();
+    const GammaL_mag = GammaL.mag();
     const VSWR = Gamma_mag < 0.9999 ? (1 + Gamma_mag) / (1 - Gamma_mag) : 999;
 
     const Yin = new Complex(1, 0).div(Zin);
     const YL = new Complex(1, 0).div(ZL);
-    const QFactor = Math.abs(Zin.im) / Zin.re;
+    const QFactor = Math.abs(Zin.im) / Math.max(Zin.re, 0.001);
 
     const returnLoss = -20 * Math.log10(Gamma_mag);
     const transCoeff = 1 - Gamma_mag;
@@ -128,15 +135,28 @@ const SmithChartTool = () => {
       QFactor,
       returnLoss,
       transCoeff,
+      wavelength,
+      electricalLength,
+      electricalLengthDegrees,
+      beta,
     };
   }, [inputs]);
 
+  const gammaToSmith = (gamma) => {
+    return {
+      x: gamma.re * 200 + 400,
+      y: -gamma.im * 200 + 300,
+    };
+  };
+
   const zToSmith = (z, Z0) => {
     const zn = new Complex(z.re / Z0, z.im / Z0);
-    const denom = (1 + zn.re) * (1 + zn.re) + zn.im * zn.im;
+    const gamma = zn.sub(new Complex(1, 0)).div(zn.add(new Complex(1, 0)));
     return {
-      x: ((zn.re * zn.re + zn.im * zn.im - 1) / denom) * 200 + 400,
-      y: ((-2 * zn.im) / denom) * 200 + 300,
+      x: gamma.re * 200 + 400,
+      y: -gamma.im * 200 + 300,
+      gamma: gamma,
+      zn: zn
     };
   };
 
@@ -151,6 +171,8 @@ const SmithChartTool = () => {
 
   const generateDetailedGrid = () => {
     const elements = [];
+    
+    // Normalized resistance circles (r = constant)
     const rValues = [0, 0.2, 0.5, 1, 2, 5];
     rValues.forEach((r) => {
       if (r === 0) {
@@ -165,7 +187,7 @@ const SmithChartTool = () => {
           />
         );
       } else {
-        const cx = 200 + (200 * r) / (1 + r);
+        const cx = 400 + (200 * r) / (1 + r);
         const radius = 200 / (1 + r);
         elements.push(
           <circle
@@ -180,9 +202,10 @@ const SmithChartTool = () => {
         elements.push(
           <text
             key={`r-label-${r}`}
-            x={cx + radius - 8}
-            y={305}
-            className="grid-text"
+            x={cx + radius - 5}
+            y={292}
+            className="grid-text resistance"
+            textAnchor="middle"
           >
             {r}
           </text>
@@ -190,11 +213,13 @@ const SmithChartTool = () => {
       }
     });
 
+    // Normalized reactance arcs (x = constant)
     const xValues = [-5, -2, -1, -0.5, -0.2, 0.2, 0.5, 1, 2, 5];
     xValues.forEach((x) => {
       const cy = 300 - 200 / x;
       const radius = 200 / Math.abs(x);
-      const startX = 200;
+      const startX = 600;
+      
       elements.push(
         <path
           key={`x-${x}`}
@@ -205,19 +230,17 @@ const SmithChartTool = () => {
       );
 
       if (Math.abs(x) <= 5) {
-        const labelAngle = x > 0 ? -25 : 25;
-        const labelRad = (labelAngle * Math.PI) / 180;
-        const labelX = startX + radius * Math.cos(labelRad);
-        const labelY = cy + radius * Math.sin(labelRad);
+        const labelX = x > 0 ? 605 : 605;
+        const labelY = x > 0 ? cy - radius + 15 : cy + radius - 5;
         elements.push(
           <text
             key={`x-label-${x}`}
             x={labelX}
             y={labelY}
-            className="grid-text"
-            textAnchor="middle"
+            className="grid-text reactance"
+            textAnchor="start"
           >
-            {x > 0 ? `+j${x}` : `-j${Math.abs(x)}`}
+            {x > 0 ? `x=+${x}` : `x=${x}`}
           </text>
         );
       }
@@ -228,18 +251,31 @@ const SmithChartTool = () => {
 
   const generateAngleMarkings = () => {
     const elements = [];
-    const angles = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330];
     const centerX = 400,
       centerY = 300,
       radius = 200;
-    angles.forEach((angle) => {
+    
+    const wavelengthPoints = [
+      { wl: 0, angle: 0, label: "0λ" },
+      { wl: 0.05, angle: 36, label: "0.05λ" },
+      { wl: 0.1, angle: 72, label: "0.1λ" },
+      { wl: 0.15, angle: 108, label: "0.15λ" },
+      { wl: 0.2, angle: 144, label: "0.2λ" },
+      { wl: 0.25, angle: 180, label: "0.25λ" },
+      { wl: 0.3, angle: 216, label: "0.3λ" },
+      { wl: 0.35, angle: 252, label: "0.35λ" },
+      { wl: 0.4, angle: 288, label: "0.4λ" },
+      { wl: 0.45, angle: 324, label: "0.45λ" },
+    ];
+
+    wavelengthPoints.forEach(({ angle, label }) => {
       const rad = ((angle - 90) * Math.PI) / 180;
       const x1 = centerX + radius * Math.cos(rad);
       const y1 = centerY + radius * Math.sin(rad);
       const x2 = centerX + (radius + 10) * Math.cos(rad);
       const y2 = centerY + (radius + 10) * Math.sin(rad);
-      const xText = centerX + (radius + 25) * Math.cos(rad);
-      const yText = centerY + (radius + 25) * Math.sin(rad);
+      const xText = centerX + (radius + 28) * Math.cos(rad);
+      const yText = centerY + (radius + 28) * Math.sin(rad);
 
       elements.push(
         <line
@@ -259,23 +295,43 @@ const SmithChartTool = () => {
           className="angle-text"
           textAnchor="middle"
         >
-          {angle}°
+          {label}
         </text>
       );
     });
+    
     return elements;
   };
 
-  const zinPoint = zToSmith(results.Zin, inputs.Z0);
-  const zlPoint = zToSmith(results.ZL, inputs.Z0);
+  const zlPoint = gammaToSmith(results.GammaL);
+  const zinPoint = gammaToSmith(results.Gamma);
+  
+  // SWR circle radius - SAME for both ZL and Zin
+  const swrCircleRadius = results.GammaL.mag() * 200;
+  
+  // Calculate arc path from ZL to Zin along SWR circle
+  const zlAngle = Math.atan2(-(zlPoint.y - 300), zlPoint.x - 400);
+  const zinAngle = Math.atan2(-(zinPoint.y - 300), zinPoint.x - 400);
+  let arcSweep = zinAngle - zlAngle;
+  
+  // Normalize angle difference
+  while (arcSweep > Math.PI) arcSweep -= 2 * Math.PI;
+  while (arcSweep < -Math.PI) arcSweep += 2 * Math.PI;
+  
+  const largeArcFlag = Math.abs(arcSweep) > Math.PI ? 1 : 0;
+  const sweepFlag = arcSweep > 0 ? 1 : 0;
+
+  // Convert to normalized impedance for display
+  const zlNorm = zToSmith(results.ZL, inputs.Z0);
+  const zinNorm = zToSmith(results.Zin, inputs.Z0);
 
   const generateScales = () => {
-    // same logic, but returns JSX elements with CSS classes
     const elements = [];
     const baseY = 550,
       startX = 200,
       endX = 600;
 
+    // Reflection Coefficient Scale
     elements.push(
       <text key="refl-label" x={100} y={baseY} className="scale-label">
         REFLECTION COEFFICIENT |Γ|
@@ -320,6 +376,8 @@ const SmithChartTool = () => {
 
     const gammaMag = results.Gamma.mag();
     const gammaX = startX + (endX - startX) * gammaMag;
+    
+    // Connection from Zin to reflection coefficient scale
     elements.push(
       <line
         key="gamma-connection"
@@ -340,6 +398,7 @@ const SmithChartTool = () => {
       />
     );
 
+    // VSWR Scale
     const vswrY = baseY + 50;
     elements.push(
       <text key="vswr-label" x={100} y={vswrY} className="scale-label">
@@ -408,6 +467,7 @@ const SmithChartTool = () => {
       );
     }
 
+    // Return Loss Scale
     const rlY = baseY + 100;
     elements.push(
       <text key="rl-label" x={100} y={rlY} className="scale-label">
@@ -478,6 +538,7 @@ const SmithChartTool = () => {
       );
     }
 
+    // Transmission Coefficient Scale
     const tcY = baseY + 150;
     elements.push(
       <text key="tc-label" x={100} y={tcY} className="scale-label">
@@ -626,7 +687,7 @@ const SmithChartTool = () => {
           <main className="center-panel">
             <div className="chart-panel">
               <svg
-                viewBox="0 0 800 750"
+                viewBox="0 0 850 750"
                 className={`chart-svg ${animate ? "animating" : ""}`}
               >
                 <defs>
@@ -648,17 +709,6 @@ const SmithChartTool = () => {
                     <stop offset="0%" stopColor="rgba(139, 92, 246, 0.1)" />
                     <stop offset="100%" stopColor="rgba(59, 130, 246, 0.1)" />
                   </linearGradient>
-
-                  <linearGradient
-                    id="lineGradient"
-                    x1="0%"
-                    y1="0%"
-                    x2="100%"
-                    y2="0%"
-                  >
-                    <stop offset="0%" stopColor="#ef4444" />
-                    <stop offset="100%" stopColor="#10b981" />
-                  </linearGradient>
                 </defs>
 
                 <circle className="main-circle" cx="400" cy="300" r="200" />
@@ -675,26 +725,68 @@ const SmithChartTool = () => {
                   y2="300"
                 />
 
-                {[0.2, 0.4, 0.6, 0.8, 1.0].map((rho) => (
+                {/* SWR Circle - SAME radius for both ZL and Zin */}
+                {swrCircleRadius > 5 && (
                   <circle
-                    key={`rho-${rho}`}
                     cx="400"
                     cy="300"
-                    r={rho * 200}
-                    className="rho-ring"
+                    r={swrCircleRadius}
+                    className="swr-circle"
                   />
+                )}
+
+                {/* Constant |Γ| circles */}
+                {[0.2, 0.4, 0.6, 0.8, 1.0].map((rho) => (
+                  <g key={`rho-${rho}`}>
+                    <circle
+                      cx="400"
+                      cy="300"
+                      r={rho * 200}
+                      className="rho-ring"
+                    />
+                    {rho < 1.0 && (
+                      <text
+                        x={400 - rho * 200 + 10}
+                        y={295}
+                        className="rho-label"
+                        textAnchor="start"
+                      >
+                        |Γ|={rho.toFixed(1)}
+                      </text>
+                    )}
+                  </g>
                 ))}
 
                 {generateAngleMarkings()}
 
+                {/* Radius line from center to ZL */}
                 <line
-                  x1={zlPoint.x}
-                  y1={zlPoint.y}
-                  x2={zinPoint.x}
-                  y2={zinPoint.y}
-                  className="zc-line"
+                  x1="400"
+                  y1="300"
+                  x2={zlPoint.x}
+                  y2={zlPoint.y}
+                  className="radius-line zl"
                 />
 
+                {/* Radius line from center to Zin */}
+                <line
+                  x1="400"
+                  y1="300"
+                  x2={zinPoint.x}
+                  y2={zinPoint.y}
+                  className="radius-line zin"
+                />
+
+                {/* Arc from ZL to Zin along SWR circle */}
+                {swrCircleRadius > 5 && (
+                  <path
+                    d={`M ${zlPoint.x} ${zlPoint.y} A ${swrCircleRadius} ${swrCircleRadius} 0 ${largeArcFlag} ${sweepFlag} ${zinPoint.x} ${zinPoint.y}`}
+                    className="transformation-arc"
+                    fill="none"
+                  />
+                )}
+
+                {/* ZL Marker */}
                 <g
                   className="marker marker-zl"
                   style={{ transformOrigin: `${zlPoint.x}px ${zlPoint.y}px` }}
@@ -720,13 +812,21 @@ const SmithChartTool = () => {
                   />
                   <text
                     x={zlPoint.x + 15}
-                    y={zlPoint.y - 10}
+                    y={zlPoint.y - 15}
                     className="marker-label red"
                   >
                     ZL
                   </text>
+                  <text
+                    x={zlPoint.x + 15}
+                    y={zlPoint.y - 2}
+                    className="marker-sublabel"
+                  >
+                    z={zlNorm.zn.re.toFixed(2)}{zlNorm.zn.im >= 0 ? '+' : ''}{zlNorm.zn.im.toFixed(2)}j
+                  </text>
                 </g>
 
+                {/* Zin Marker */}
                 <g
                   className="marker marker-zin"
                   style={{ transformOrigin: `${zinPoint.x}px ${zinPoint.y}px` }}
@@ -752,10 +852,17 @@ const SmithChartTool = () => {
                   />
                   <text
                     x={zinPoint.x + 15}
-                    y={zinPoint.y - 10}
+                    y={zinPoint.y - 15}
                     className="marker-label green"
                   >
                     Zin
+                  </text>
+                  <text
+                    x={zinPoint.x + 15}
+                    y={zinPoint.y - 2}
+                    className="marker-sublabel"
+                  >
+                    z={zinNorm.zn.re.toFixed(2)}{zinNorm.zn.im >= 0 ? '+' : ''}{zinNorm.zn.im.toFixed(2)}j
                   </text>
                 </g>
 
@@ -765,8 +872,53 @@ const SmithChartTool = () => {
                   className="chart-title"
                   textAnchor="middle"
                 >
-                  SMITH CHART - IMPEDANCE OR ADMITTANCE COORDINATES
+                  NORMALIZED SMITH CHART
                 </text>
+                
+                <text
+                  x="400"
+                  y="50"
+                  className="chart-subtitle"
+                  textAnchor="middle"
+                >
+                  IMPEDANCE COORDINATES
+                </text>
+
+                <text
+                  x="650"
+                  y="305"
+                  className="direction-label"
+                  textAnchor="start"
+                >
+                  ← TOWARD GENERATOR
+                </text>
+                
+                <text
+                  x="150"
+                  y="305"
+                  className="direction-label"
+                  textAnchor="end"
+                >
+                  TOWARD LOAD →
+                </text>
+                
+                <text x="200" y="320" className="baseline-label" textAnchor="middle">r=0</text>
+                <text x="300" y="320" className="baseline-label" textAnchor="middle">r=0.5</text>
+                <text x="400" y="320" className="baseline-label" textAnchor="middle">r=1</text>
+                <text x="500" y="320" className="baseline-label" textAnchor="middle">r=2</text>
+                <text x="583" y="320" className="baseline-label" textAnchor="middle">r=5</text>
+                <text x="600" y="320" className="baseline-label" textAnchor="middle">∞</text>
+
+                <g className="legend">
+                  <rect x="50" y="450" width="160" height="85" rx="8" className="legend-box" />
+                  <text x="60" y="468" className="legend-title">Legend</text>
+                  <circle cx="65" cy="480" r="4" className="marker-core red" />
+                  <text x="75" y="485" className="legend-text">Load Impedance (ZL)</text>
+                  <circle cx="65" cy="500" r="4" className="marker-core green" />
+                  <text x="75" y="505" className="legend-text">Input Impedance (Zin)</text>
+                  <line x1="60" y1="515" x2="75" y2="515" className="swr-circle" style={{ strokeDasharray: "4,2" }} />
+                  <text x="80" y="520" className="legend-text">SWR Circle</text>
+                </g>
 
                 {generateScales()}
               </svg>
@@ -830,6 +982,16 @@ const SmithChartTool = () => {
               <div className="result-head">Q-Factor</div>
               <div className="result-value large">
                 {results.QFactor.toFixed(3)}
+              </div>
+            </div>
+
+            <div className="result-card wavelength">
+              <div className="result-head">Electrical Length</div>
+              <div className="result-value">
+                {results.electricalLength.toFixed(4)}λ
+              </div>
+              <div className="result-sub">
+                {results.electricalLengthDegrees.toFixed(2)}° | λ = {results.wavelength.toFixed(4)}m
               </div>
             </div>
           </aside>
