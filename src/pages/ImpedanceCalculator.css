@@ -52,6 +52,104 @@
   margin: 0.5rem 0 0 0;
 }
 
+/* Formula Toggle Button */
+.formula-toggle-container {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.formula-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid #a855f7;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #a855f7;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+}
+
+.formula-toggle-btn:hover {
+  background: linear-gradient(135deg, #a855f7, #ec4899);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.3);
+}
+
+/* Formulas Section */
+.formulas-section {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.formulas-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 1rem;
+  border-bottom: 3px solid #a855f7;
+}
+
+.formulas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.formula-card {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #a855f7;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.formula-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+}
+
+.formula-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #a855f7;
+  margin: 0 0 0.75rem 0;
+}
+
+.formula-equation {
+  font-family: "Courier New", monospace;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1f2937;
+  background: #f3f4f6;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  margin-bottom: 0.75rem;
+  overflow-x: auto;
+}
+
+.formula-description {
+  font-size: 0.875rem;
+  color: #666;
+  margin: 0;
+  line-height: 1.5;
+}
+
 /* Content Grid */
 .impedance-calc-content {
   display: grid;
@@ -172,6 +270,12 @@
 .result-card.yellow {
   border-left-color: #eab308;
 }
+.result-card.violet {
+  border-left-color: #8b5cf6;
+}
+.result-card.emerald {
+  border-left-color: #10b981;
+}
 
 .result-icon {
   width: 50px;
@@ -210,6 +314,12 @@
 .result-card.yellow .result-icon {
   background: linear-gradient(135deg, #eab308, #ca8a04);
 }
+.result-card.violet .result-icon {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+.result-card.emerald .result-icon {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
 
 .result-content {
   flex: 1;
@@ -239,6 +349,17 @@
 .result-meta {
   font-size: 0.75rem;
   color: #9ca3af;
+  margin-bottom: 0.3rem;
+}
+
+.result-formula {
+  font-size: 0.7rem;
+  color: #a855f7;
+  font-style: italic;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e5e7eb;
+  font-family: "Courier New", monospace;
 }
 
 /* Responsive Design */
@@ -250,6 +371,10 @@
   .impedance-calc-results {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
+
+  .formulas-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
 }
 
 @media (max-width: 768px) {
@@ -259,6 +384,8 @@
 
   .impedance-calc-header {
     padding: 1.5rem;
+    flex-direction: column;
+    text-align: center;
   }
 
   .impedance-calc-title {
@@ -267,5 +394,18 @@
 
   .impedance-calc-results {
     grid-template-columns: 1fr;
+  }
+
+  .formulas-section {
+    padding: 1.5rem;
+  }
+
+  .formulas-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .formula-toggle-btn {
+    width: 100%;
+    justify-content: center;
   }
 }
