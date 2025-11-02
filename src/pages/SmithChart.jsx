@@ -256,16 +256,18 @@ const SmithChartTool = () => {
       radius = 200;
     
     const wavelengthPoints = [
-      { wl: 0, angle: 0, label: "90" },
-      { wl: 0.05, angle: 36, label: "60" },
-      { wl: 0.1, angle: 72, label: "30" },
-      { wl: 0.15, angle: 108, label: "-30" },
-      { wl: 0.2, angle: 144, label: "-60" },
-      { wl: 0.25, angle: 180, label: "-90" },
-      { wl: 0.3, angle: 216, label: "-120" },
-      { wl: 0.35, angle: 252, label: "-150" },
-      { wl: 0.4, angle: 288, label: "150" },
-      { wl: 0.45, angle: 324, label: "120" },
+      { angle: 0, label: "90" },
+      { angle: 30, label: "60" },
+      { angle: 60, label: "30" },
+      { angle: 90, label: "0" },
+      { angle: 120, label: "-30" },
+      { angle: 150, label: "-60" },
+      { angle: 180, label: "-90" },
+      { angle: 210, label: "-120" },
+      { angle: 240, label: "-150" },
+      { angle: 270, label: "180" },
+      { angle: 300, label: "150" },
+      { angle: 330, label: "120" },
     ];
 
     wavelengthPoints.forEach(({ angle, label }) => {
