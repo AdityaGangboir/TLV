@@ -180,7 +180,7 @@ const SmithChartTool = () => {
           <circle
             key="r-0"
             className="grid-circle"
-            cx={200}
+            cx={400}
             cy={300}
             r={200}
             fill="none"
@@ -216,8 +216,8 @@ const SmithChartTool = () => {
     // Normalized reactance arcs (x = constant)
     const xValues = [-5, -2, -1, -0.5, -0.2, 0.2, 0.5, 1, 2, 5];
     xValues.forEach((x) => {
-      const cy = 300 - 200 / x;
-      const radius = 200 / Math.abs(x);
+      const cy = 300 - 200 /(-x);
+      const radius = 200 / (-Math.abs(x));
       const startX = 600;
       
       elements.push(
@@ -230,8 +230,8 @@ const SmithChartTool = () => {
       );
 
       if (Math.abs(x) <= 5) {
-        const labelX = x > 0 ? 605 : 605;
-        const labelY = x > 0 ? cy - radius + 15 : cy + radius - 5;
+        const labelX = x > 0 ? 300-Math.ceil(cy/1.5) + 480 : Math.ceil(cy/1.5) + 380;
+        const labelY = x > 0 ? 390 : 220;
         elements.push(
           <text
             key={`x-label-${x}`}
@@ -240,7 +240,7 @@ const SmithChartTool = () => {
             className="grid-text reactance"
             textAnchor="start"
           >
-            {x > 0 ? `x=+${x}` : `x=${x}`}
+            {x < 0 ? `x=+${-x}j` : `x=${-x}j`}
           </text>
         );
       }
@@ -256,16 +256,16 @@ const SmithChartTool = () => {
       radius = 200;
     
     const wavelengthPoints = [
-      { wl: 0, angle: 0, label: "0λ" },
-      { wl: 0.05, angle: 36, label: "0.05λ" },
-      { wl: 0.1, angle: 72, label: "0.1λ" },
-      { wl: 0.15, angle: 108, label: "0.15λ" },
-      { wl: 0.2, angle: 144, label: "0.2λ" },
-      { wl: 0.25, angle: 180, label: "0.25λ" },
-      { wl: 0.3, angle: 216, label: "0.3λ" },
-      { wl: 0.35, angle: 252, label: "0.35λ" },
-      { wl: 0.4, angle: 288, label: "0.4λ" },
-      { wl: 0.45, angle: 324, label: "0.45λ" },
+      { wl: 0, angle: 0, label: "90" },
+      { wl: 0.05, angle: 36, label: "60" },
+      { wl: 0.1, angle: 72, label: "30" },
+      { wl: 0.15, angle: 108, label: "-30" },
+      { wl: 0.2, angle: 144, label: "-60" },
+      { wl: 0.25, angle: 180, label: "-90" },
+      { wl: 0.3, angle: 216, label: "-120" },
+      { wl: 0.35, angle: 252, label: "-150" },
+      { wl: 0.4, angle: 288, label: "150" },
+      { wl: 0.45, angle: 324, label: "120" },
     ];
 
     wavelengthPoints.forEach(({ angle, label }) => {
@@ -378,16 +378,16 @@ const SmithChartTool = () => {
     const gammaX = startX + (endX - startX) * gammaMag;
     
     // Connection from Zin to reflection coefficient scale
-    elements.push(
-      <line
-        key="gamma-connection"
-        x1={zinPoint.x}
-        y1={zinPoint.y}
-        x2={gammaX}
-        y2={baseY + 15}
-        className="conn-line gamma"
-      />
-    );
+    // elements.push(
+    //   <line
+    //     key="gamma-connection"
+    //     x1={zinPoint.x}
+    //     y1={zinPoint.y}
+    //     x2={gammaX}
+    //     y2={baseY + 15}
+    //     className="conn-line gamma"
+    //   />
+    // );
     elements.push(
       <circle
         key="gamma-marker"
