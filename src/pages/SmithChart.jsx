@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import { Zap, TrendingUp, Radio } from "lucide-react";
 import "./SmithChart.css";
 
-const Radius = 200;
+const Radius = 300;
 /* Complex number utilities */
 class Complex {
   constructor(real, imag = 0) {
@@ -145,8 +145,8 @@ const SmithChartTool = () => {
 
   const gammaToSmith = (gamma) => {
     return {
-      x: gamma.re * 200 + 400,
-      y: -gamma.im * 200 + 300,
+      x: gamma.re * 300 + 400,
+      y: -gamma.im * 300 + 300,
     };
   };
 
@@ -154,8 +154,8 @@ const SmithChartTool = () => {
     const zn = new Complex(z.re / Z0, z.im / Z0);
     const gamma = zn.sub(new Complex(1, 0)).div(zn.add(new Complex(1, 0)));
     return {
-      x: gamma.re * 200 + 400,
-      y: -gamma.im * 200 + 300,
+      x: gamma.re * 300 + 400,
+      y: -gamma.im * 300 + 300,
       gamma: gamma,
       zn: zn
     };
@@ -174,7 +174,9 @@ const SmithChartTool = () => {
     const elements = [];
     
     // Normalized resistance circles (r = constant)
-    const rValues = [0, 0.2, 0.5, 1, 2, 5];
+    // const rValues = [0, 0.2, 0.5, 1, 2, 5];
+    const rValues=[1000, 5,2,1,0.5,0.2,0];
+    let offset = 0;
     rValues.forEach((r) => {
       if (r === 0) {
         elements.push(
@@ -183,13 +185,13 @@ const SmithChartTool = () => {
             className="grid-circle"
             cx={400}
             cy={300}
-            r={200}
+            r={300}
             fill="none"
           />
         );
       } else {
-        const cx = 400 + (200 * r) / (1 + r);
-        const radius = 200 / (1 + r);
+        const cx = 400 + (300 * r) / (1 + r);
+        const radius = 300 / (1 + r);
         elements.push(
           <circle
             key={`r-${r}`}
@@ -203,7 +205,7 @@ const SmithChartTool = () => {
         elements.push(
           <text
             key={`r-label-${r}`}
-            x={cx + radius - 5}
+            x={cx + radius - 5 - offset}
             y={292}
             className="grid-text resistance"
             textAnchor="middle"
@@ -212,14 +214,16 @@ const SmithChartTool = () => {
           </text>
         );
       }
+
+      offset += 100;
     });
 
     // Normalized reactance arcs (x = constant)
     const xValues = [-5, -2, -1, -0.5, -0.2, 0.2, 0.5, 1, 2, 5];
     xValues.forEach((x) => {
-      const cy = 300 - 200 /(-x);
-      const radius = 200 / (-Math.abs(x));
-      const startX = 600;
+      const cy = 300 - 300 /(-x);
+      const radius = 300 / (-Math.abs(x));
+      const startX = 700;
       
       elements.push(
         <path
@@ -231,7 +235,7 @@ const SmithChartTool = () => {
       );
 
       if (Math.abs(x) <= 5) {
-        const labelX = x > 0 ? 300-Math.ceil(cy/1.5) + 480 : Math.ceil(cy/1.5) + 380;
+        const labelX = x > 0 ? 420-Math.ceil(cy/1.5) + 480 : Math.ceil(cy/1.5) + 500;
         const labelY = x > 0 ? 390 : 220;
         elements.push(
           <text
@@ -254,7 +258,7 @@ const SmithChartTool = () => {
     const elements = [];
     const centerX = 400,
       centerY = 300,
-      radius = 200;
+      radius = 300;
     
     const wavelengthPoints = [
       { angle: 0, label: "90" },
@@ -310,7 +314,7 @@ const SmithChartTool = () => {
   const zinPoint = gammaToSmith(results.Gamma);
   
   // SWR circle radius - SAME for both ZL and Zin
-  const swrCircleRadius = results.GammaL.mag() * 200;
+  const swrCircleRadius = results.GammaL.mag() * 300;
   
   // Calculate arc path from ZL to Zin along SWR circle
   const zlAngle = Math.atan2(-(zlPoint.y - 300), zlPoint.x - 400);
@@ -330,9 +334,9 @@ const SmithChartTool = () => {
 
   const generateScales = () => {
     const elements = [];
-    const baseY = 550,
+    const baseY = 650,
       startX = 400,
-      endX = 200;
+      endX = 100;
 
     // Reflection Coefficient Scale
     elements.push(
@@ -690,7 +694,7 @@ const SmithChartTool = () => {
           <main className="center-panel">
             <div className="chart-panel">
               <svg
-                viewBox="0 0 850 750"
+                viewBox="0 -200 850 1200"
                 className={`chart-svg ${animate ? "animating" : ""}`}
               >
                 <defs>
@@ -714,7 +718,7 @@ const SmithChartTool = () => {
                   </linearGradient>
                 </defs>
 
-                <circle className="main-circle" cx="400" cy="300" r="200" />
+                <circle className="main-circle" cx="400" cy="300" r="300" />
 
                 {generateDetailedGrid()}
 
@@ -722,9 +726,9 @@ const SmithChartTool = () => {
 
                 <line
                   className="center-line"
-                  x1="200"
+                  x1="100"
                   y1="300"
-                  x2="600"
+                  x2="700"
                   y2="300"
                 />
 
@@ -739,26 +743,7 @@ const SmithChartTool = () => {
                 )}
 
                 {/* Constant |Γ| circles */}
-                {[0.2, 0.4, 0.6, 0.8, 1.0].map((rho) => (
-                  <g key={`rho-${rho}`}>
-                    <circle
-                      cx="400"
-                      cy="300"
-                      r={rho * 200}
-                      className="rho-ring"
-                    />
-                    {rho < 1.0 && (
-                      <text
-                        x={400 - rho * 200 + 10}
-                        y={295}
-                        className="rho-label"
-                        textAnchor="start"
-                      >
-                        |Γ|={rho.toFixed(1)}
-                      </text>
-                    )}
-                  </g>
-                ))}
+            
 
                 {generateAngleMarkings()}
 
@@ -871,7 +856,7 @@ const SmithChartTool = () => {
 
                 <text
                   x="400"
-                  y="30"
+                  y="-150"
                   className="chart-title"
                   textAnchor="middle"
                 >
@@ -880,7 +865,7 @@ const SmithChartTool = () => {
                 
                 <text
                   x="400"
-                  y="50"
+                  y="-130"
                   className="chart-subtitle"
                   textAnchor="middle"
                 >
@@ -888,8 +873,8 @@ const SmithChartTool = () => {
                 </text>
 
                 <text
-                  x="650"
-                  y="305"
+                  x="730"
+                  y="310"
                   className="direction-label"
                   textAnchor="start"
                 >
@@ -897,20 +882,21 @@ const SmithChartTool = () => {
                 </text>
                 
                 <text
-                  x="150"
-                  y="305"
+                  x="80"
+                  y="310"
                   className="direction-label"
                   textAnchor="end"
                 >
                   TOWARD LOAD ↓
                 </text>
                 
-                <text x="200" y="320" className="baseline-label" textAnchor="middle">r=0</text>
+                <text x="100" y="320" className="baseline-label" textAnchor="middle">r=0</text>
+                <text x="200" y="320" className="baseline-label" textAnchor="middle">r=0.2</text>
                 <text x="300" y="320" className="baseline-label" textAnchor="middle">r=0.5</text>
                 <text x="400" y="320" className="baseline-label" textAnchor="middle">r=1</text>
                 <text x="500" y="320" className="baseline-label" textAnchor="middle">r=2</text>
-                <text x="583" y="320" className="baseline-label" textAnchor="middle">r=5</text>
-                <text x="600" y="320" className="baseline-label" textAnchor="middle">∞</text>
+                <text x="600" y="320" className="baseline-label" textAnchor="middle">r=5</text>
+                <text x="700" y="320" className="baseline-label" textAnchor="middle">∞</text>
 
                 <g className="legend">
                   <rect x="50" y="450" width="160" height="85" rx="8" className="legend-box" />

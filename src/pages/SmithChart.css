@@ -174,7 +174,7 @@
 .main-circle {
   cx: 400;
   cy: 300;
-  r: 200;
+  r: 300;
   fill: url(#chartGradient);
   stroke: rgba(139, 92, 246, 0.5);
   stroke-width: 2;
@@ -210,12 +210,6 @@
 
 .grid-text.resistance {
   fill: rgba(139, 92, 246, 0.9);
-}
-
-.rho-label {
-  fill: rgba(168, 85, 247, 0.6);
-  font-size: 8px;
-  font-weight: 600;
 }
 
 .angle-tick {
@@ -327,13 +321,13 @@
 /* chart title */
 .chart-title {
   fill: rgba(139, 92, 246, 0.9);
-  font-size: 16px;
+  font-size: 30px !important; 
   font-weight: 700;
 }
 
 .chart-subtitle {
   fill: rgba(139, 92, 246, 0.7);
-  font-size: 12px;
+  font-size: 20px;
   font-weight: 600;
 }
 
