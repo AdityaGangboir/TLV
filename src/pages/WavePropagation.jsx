@@ -5,14 +5,14 @@ import './WavePropagation.css';
 const WavePropagation = () => {
   const [inputs, setInputs] = useState({
     R: 2,
-    L: 10,
-    G: 0.1,
-    C: 1000,
-    freq: 1,
-    length: 1,
+    L: 2500,
+    G: 0.0001,
+    C: 80,
+    freq: 50*1e-9,
+    length: 4000000,
     ZL: 75,
     V0: 1,
-    speed: 1,
+    speed: .1,
   });
 
   const [time, setTime] = useState(0);
@@ -45,7 +45,7 @@ const WavePropagation = () => {
   useEffect(() => {
     if (isPlaying) {
       animationRef.current = setInterval(() => {
-        setTime((t) => t + 0.02 * inputs.speed);
+        setTime((t) => t + 0.002 * inputs.speed);
       }, 16);
     } else {
       if (animationRef.current) {
@@ -79,7 +79,7 @@ const WavePropagation = () => {
 
   // Generate wave data
   const generateWaveData = () => {
-    const points = 200;
+    const points = 100;
     const voltage = [];
     const current = [];
     const forwardV = [];
@@ -92,11 +92,13 @@ const WavePropagation = () => {
       const fwdV = inputs.V0 * Math.cos(omega * time - beta * z);
       const refV = inputs.V0 * gammaMag * Math.cos(omega * time + beta * z + gammaPhase * Math.PI / 180);
       const totalV = fwdV + refV;
+      // console.log(totalV);
 
       const fwdI = (inputs.V0 / Zc_real) * Math.cos(omega * time - beta * z - Math.PI / 2);
       const refI = -(inputs.V0 / Zc_real) * gammaMag * Math.cos(omega * time + beta * z - Math.PI / 2 + gammaPhase * Math.PI / 180);
-      const totalI = fwdI + refI;
-
+      const totalI = 125*(fwdI + refI);
+      // console.log(totalI);
+      
       voltage.push({ x: z, y: totalV });
       current.push({ x: z, y: totalI });
       forwardV.push({ x: z, y: fwdV });

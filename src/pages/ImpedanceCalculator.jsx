@@ -167,8 +167,8 @@ const ImpedanceCalculator = () => {
   };
 
   const formatComplex = (z, unit = "") => {
-    const sign = z.im >= 0 ? "+" : "";
-    return `${z.re.toFixed(3)} ${sign} j${z.im.toFixed(3)} ${unit}`;
+    const sign = z.im >= 0 ? "+" : "-";
+    return `${z.re.toFixed(3)} ${sign} j${Math.abs(z.im.toFixed(3))} ${unit}`;
   };
 
   const formulas = [

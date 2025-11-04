@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import { Zap, TrendingUp, Radio } from "lucide-react";
 import "./SmithChart.css";
 
+const Radius = 200;
 /* Complex number utilities */
 class Complex {
   constructor(real, imag = 0) {
@@ -330,8 +331,8 @@ const SmithChartTool = () => {
   const generateScales = () => {
     const elements = [];
     const baseY = 550,
-      startX = 200,
-      endX = 600;
+      startX = 400,
+      endX = 200;
 
     // Reflection Coefficient Scale
     elements.push(
@@ -380,16 +381,16 @@ const SmithChartTool = () => {
     const gammaX = startX + (endX - startX) * gammaMag;
     
     // Connection from Zin to reflection coefficient scale
-    // elements.push(
-    //   <line
-    //     key="gamma-connection"
-    //     x1={zinPoint.x}
-    //     y1={zinPoint.y}
-    //     x2={gammaX}
-    //     y2={baseY + 15}
-    //     className="conn-line gamma"
-    //   />
-    // );
+    elements.push(
+      <line
+        key="gamma-connection"
+        x1={gammaX}
+        y1={300}
+        x2={gammaX}
+        y2={baseY + 15}
+        className="conn-line gamma"
+      />
+    );
     elements.push(
       <circle
         key="gamma-marker"
@@ -491,7 +492,7 @@ const SmithChartTool = () => {
     rlValues.forEach((val) => {
       const gamma = Math.pow(10, -val / 20);
       const x = startX + (endX - startX) * gamma;
-      if (x >= startX && x <= endX) {
+      if (x >= endX && x <= startX) {
         elements.push(
           <line
             key={`rl-tick-${val}`}
@@ -892,7 +893,7 @@ const SmithChartTool = () => {
                   className="direction-label"
                   textAnchor="start"
                 >
-                  ← TOWARD GENERATOR
+                  ↓ TOWARD GENERATOR
                 </text>
                 
                 <text
@@ -901,7 +902,7 @@ const SmithChartTool = () => {
                   className="direction-label"
                   textAnchor="end"
                 >
-                  TOWARD LOAD →
+                  TOWARD LOAD ↓
                 </text>
                 
                 <text x="200" y="320" className="baseline-label" textAnchor="middle">r=0</text>
@@ -933,8 +934,8 @@ const SmithChartTool = () => {
             <div className="result-card zin">
               <div className="result-head">Input Impedance (Zin)</div>
               <div className="result-value">
-                {results.Zin.re.toFixed(2)} {results.Zin.im >= 0 ? "+" : ""}
-                {results.Zin.im.toFixed(2)}j Ω
+                {results.Zin.re.toFixed(2)} {results.Zin.im >= 0 ? "+j" : "-j"}
+                {Math.abs(results.Zin.im.toFixed(2))} Ω
               </div>
               <div className="result-sub">
                 |Z| = {results.Zin.mag().toFixed(2)} Ω, ∠
@@ -945,8 +946,8 @@ const SmithChartTool = () => {
             <div className="result-card zc">
               <div className="result-head">Characteristic Impedance (Zc)</div>
               <div className="result-value">
-                {results.Zc.re.toFixed(2)} {results.Zc.im >= 0 ? "+" : ""}
-                {results.Zc.im.toFixed(2)}j Ω
+                {results.Zc.re.toFixed(2)} {results.Zc.im >= 0 ? "+j" : "-j"}
+                {Math.abs(results.Zc.im.toFixed(2))} Ω
               </div>
               <div className="result-sub">
                 |Z| = {results.Zc.mag().toFixed(2)} Ω, ∠
@@ -957,8 +958,8 @@ const SmithChartTool = () => {
             <div className="result-card gamma">
               <div className="result-head">Reflection Coefficient (Γ)</div>
               <div className="result-value">
-                {results.Gamma.re.toFixed(4)} {results.Gamma.im >= 0 ? "+" : ""}{" "}
-                {results.Gamma.im.toFixed(4)}j
+                {results.Gamma.re.toFixed(4)} {results.Gamma.im >= 0 ? "+j" : "-j"}{" "}
+                {Math.abs(results.Gamma.im.toFixed(4))}
               </div>
               <div className="result-sub">
                 |Γ| = {results.Gamma.mag().toFixed(4)}, ∠
