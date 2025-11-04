@@ -523,7 +523,7 @@ const SmithChartTool = () => {
 
     const rlGamma = Math.pow(10, -results.returnLoss / 20);
     const rlX = startX + (endX - startX) * rlGamma;
-    if (rlX >= startX && rlX <= endX) {
+    if (rlX <= startX && rlX >= endX) {
       elements.push(
         <line
           key="rl-connection"
