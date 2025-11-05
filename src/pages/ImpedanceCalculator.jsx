@@ -113,7 +113,7 @@ const ImpedanceCalculator = () => {
 
     // Reflection coefficient at load
     // ΓL = (ZL - Z0) / (ZL + Z0)
-    const GammaL = ZL.sub(new Complex(Z0, 0)).div(ZL.add(new Complex(Z0, 0)));
+    const GammaL = ZL.sub(new Complex(Zc, 0)).div(ZL.add(new Complex(Zc, 0)));
 
     // Reflection coefficient at input
     // Γin = (Zin - Z0) / (Zin + Z0)
@@ -133,7 +133,7 @@ const ImpedanceCalculator = () => {
 
     // Quality factor Q = ωL/R or 1/(ωRC)
     const Q_series = (omega * L * 1e-9) / R;
-    const Q_shunt = 1 / (omega * C * 1e-12 * (1/G));
+    const Q_shunt = (omega * C * 1e-12) / Math.max(G, 1e-18);
 
     // Electrical length in degrees = βl * 180/π
     const electricalLength = (beta * length * 180) / Math.PI;
