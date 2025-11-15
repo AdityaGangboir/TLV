@@ -90,13 +90,13 @@ const WavePropagation = () => {
       const z = (i / points) * inputs.length;
 
       const fwdV = inputs.V0 * Math.cos(omega * time - beta * z);
-      const refV = inputs.V0 * gammaMag * Math.cos(omega * time + beta * z + gammaPhase * Math.PI / 180);
+      const refV = inputs.V0 * gammaMag * Math.cos(omega * time + beta * z + gammaPhase);
       const totalV = fwdV + refV;
       // console.log(totalV);
 
-      const fwdI = (inputs.V0 / Zc_real) * Math.cos(omega * time - beta * z - Math.PI / 2);
-      const refI = -(inputs.V0 / Zc_real) * gammaMag * Math.cos(omega * time + beta * z - Math.PI / 2 + gammaPhase * Math.PI / 180);
-      const totalI = 125*(fwdI + refI);
+      //const fwdI = (inputs.V0 / Zc_real) * Math.cos(omega * time - beta * z);
+      //const refI = -(inputs.V0 / Zc_real) * gammaMag * Math.cos(omega * time + beta * z + gammaPhase * Math.PI / 180);
+      const totalI = 125*(fwdV - refV)/Zc_real;
       // console.log(totalI);
       
       voltage.push({ x: z, y: totalV });
@@ -227,7 +227,7 @@ const WavePropagation = () => {
                 Line Parameters
               </h2>
               <div className="control-grid">
-                <div className="control-item">
+                {/* <div className="control-item">
                   <label className="label">Resistance R (Ω/m)</label>
                   <input
                     className="input"
@@ -236,7 +236,7 @@ const WavePropagation = () => {
                     onChange={(e) => handleInputChange("R", e.target.value)}
                     step="0.1"
                   />
-                </div>
+                </div> */}
                 <div className="control-item">
                   <label className="label">Inductance L (nH/m)</label>
                   <input
@@ -248,7 +248,7 @@ const WavePropagation = () => {
                   />
                   <span className="si-unit">{(inputs.L * 1e-9).toExponential(2)} H/m</span>
                 </div>
-                <div className="control-item">
+                {/* <div className="control-item">
                   <label className="label">Conductance G (S/m)</label>
                   <input
                     className="input"
@@ -257,7 +257,7 @@ const WavePropagation = () => {
                     onChange={(e) => handleInputChange("G", e.target.value)}
                     step="0.00001"
                   />
-                </div>
+                </div> */}
                 <div className="control-item">
                   <label className="label">Capacitance C (pF/m)</label>
                   <input
@@ -354,7 +354,7 @@ const WavePropagation = () => {
                 </div>
                 <div className="info-card" style={{ borderTopColor: '#3b82f6' }}>
                   <div className="info-label">Phase Constant β</div>
-                  <div className="info-value">{beta.toFixed(2)} rad/m</div>
+                  <div className="info-value">~{beta.toFixed(2)} rad/m</div>
                 </div>
                 <div className="info-card" style={{ borderTopColor: '#10b981' }}>
                   <div className="info-label">Char. Impedance Z₀</div>
@@ -577,7 +577,7 @@ const WavePropagation = () => {
 
             {/* Current Chart */}
             <div className="chart-container">
-              <h3 className="chart-title">Current Wave (90° phase shift from voltage)</h3>
+              <h3 className="chart-title">Current Wave</h3>
               <svg width={width} height={height} className="chart">
                 <rect x={margin.left} y={margin.top} width={plotWidth} height={plotHeight} fill="url(#grid)" />
                 
