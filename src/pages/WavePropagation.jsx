@@ -439,13 +439,13 @@ const WavePropagation = () => {
                   <strong>Forward Voltage Wave:</strong> V<sub>fwd</sub>(z,t) = V₀ cos(ωt - βz)
                 </div>
                 <div className="equation">
-                  <strong>Reflected Voltage Wave:</strong> V<sub>fwd</sub>(z,t) = V₀|Γ| cos(ωt + βz + θ(Γ))
+                  <strong>Reflected Voltage Wave:</strong> V<sub>rwd</sub>(z,t) = V₀|Γ| cos(ωt + βz + θ(Γ))
                 </div>
                 <div className="equation">
                   <strong>Forward Current Wave:</strong> I<sub>fwd</sub>(z,t) = V₀/Zc_real cos(ωt - βz)
                 </div>
                 <div className="equation">
-                  <strong>Reflected Current Wave:</strong> V<sub>fwd</sub>(z,t) = -V₀|Γ|/Zc_real cos(ωt + βz + θ(Γ))
+                  <strong>Reflected Current Wave:</strong> V<sub>rwd</sub>(z,t) = -V₀|Γ|/Zc_real cos(ωt + βz + θ(Γ))
                 </div>
                 <div className="equation">
                   <strong>Reflection Coefficient:</strong> Γ = (Z<sub>L</sub> - Z₀) / (Z<sub>L</sub> + Z₀)
