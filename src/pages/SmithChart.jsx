@@ -47,9 +47,9 @@ class Complex {
 
 const SmithChartTool = () => {
   const [inputs, setInputs] = useState({
-    R: 75,
+    R: 0,
     L: 250,
-    G: 0.0001,
+    G: 0,
     C: 100,
     freq: 1,
     length: 0.08,

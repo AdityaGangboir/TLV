@@ -10,7 +10,7 @@ const WavePropagation = () => {
     C: 80,
     freq: 50*1e-9,
     length: 4000000,
-    ZL: 75,
+    ZL: 0,
     V0: 1,
     speed: .1,
   });
